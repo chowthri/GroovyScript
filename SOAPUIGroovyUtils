@@ -1,5 +1,6 @@
 import groovy.io.FileType
-
+def LoadAllXML()
+{
 // Define the directory path where the XML files are located
 def directoryPath = "C:/path/to/your/directory"
 
@@ -40,4 +41,30 @@ if (!dir.exists() || !dir.isDirectory()) {
             log.info "Skipping non-XML file: ${file.name}"
         }
     }
+}
+}
+
+def SelectRandomNames()
+{
+       import java.util.Random
+
+// Define lists of first names and last names
+def firstNames = ["John", "Emily", "Michael", "Sophia", "David", "Olivia", "James", "Emma"]
+def lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis"]
+
+// Create a Random instance
+def random = new Random()
+
+// Function to generate a random full name
+def generateRandomName() {
+    def firstName = firstNames[random.nextInt(firstNames.size())]
+    def lastName = lastNames[random.nextInt(lastNames.size())]
+    return firstName + " " + lastName
+}
+
+// Generate and print a random name
+def randomName = generateRandomName()
+log.info "Generated Random Name: $randomName"
+
+   
 }
