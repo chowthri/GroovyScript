@@ -1,0 +1,43 @@
+import groovy.io.FileType
+
+// Define the directory path where the XML files are located
+def directoryPath = "C:/path/to/your/directory"
+
+// Create a File object for the directory
+def dir = new File(directoryPath)
+
+// Check if the directory exists
+if (!dir.exists() || !dir.isDirectory()) {
+    log.error "Directory does not exist: $directoryPath"
+} else {
+    // Loop through each file in the directory and process only XML files
+    dir.eachFile(FileType.FILES) { file ->
+        if (file.name.endsWith(".xml")) {
+            log.info "Processing file: ${file.name}"
+
+            // Read the XML file content
+            def xmlContent = file.text
+
+            // Get the request step
+            def soapStep = testRunner.testCase.getTestStepByName("Your Request Step Name")
+
+            if (soapStep == null) {
+                log.error "Test step not found. Check the name."
+            } else if (soapStep instanceof com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequestStep) {
+                // Set the request content with the XML data
+                soapStep.getTestRequest().setRequestContent(xmlContent)
+                log.info "Request content set successfully for file: ${file.name}"
+
+                // Run the request step silently without message boxes
+                def response = soapStep.run(testRunner, context, false)
+
+                // Log the response if needed
+                log.info "Response for ${file.name}: ${response.status}"
+            } else {
+                log.error "The test step is not a SOAP request step."
+            }
+        } else {
+            log.info "Skipping non-XML file: ${file.name}"
+        }
+    }
+}
